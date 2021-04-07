@@ -1,5 +1,10 @@
 # Backup files
 *~
 
-# Prism Log File (No need to commit log text)
-backend/logs/prismlog.txt
+# Mac Finder files
+.DS_Store
+
+# Ignore log files
+# Note, to ignore backend/logs/prismlog.txt, you may need to run the following:
+# git update-index --skip-worktree backend/logs/prismlog.txt 
+backend/logs/
