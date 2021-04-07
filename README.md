@@ -14,9 +14,9 @@ Process Reporting in System macOS
 We will need to setup pipenv as part of the build when the app is installed.
 
 This would require something like the following commands
-    -   `pip3 install pipenv`
-    -   `pipenv --python 3.9.1`
-    -   `pipenv install`
+-   `pip3 install pipenv`
+-   `pipenv --python 3.9.1`
+-   `pipenv install`
 
 Then, to run the backend:
     -   `pipenv run python backend`
