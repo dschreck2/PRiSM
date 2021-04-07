@@ -60,7 +60,7 @@ repos:
     name: radon
     stages: [commit]
     language: system
-    entry: pipenv run radon cc zECuAoA
+    entry: pipenv run radon cc PRiSM
     types: [python]
     require_serial: true
 
