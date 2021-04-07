@@ -1,1 +1,5 @@
+# Backup files
 *~
+
+# Prism Log File (No need to commit log text)
+backend/logs/prismlog.txt
