@@ -11,7 +11,9 @@ Process Reporting in System macOS
     -   `pipenv shell`
 
 ### Python Installation (Production)
-We will need to setup pipenv as part of the build when the app is installed. This would require something like the following commands
+We will need to setup pipenv as part of the build when the app is installed.
+
+This would require something like the following commands
     -   `pip3 install pipenv`
     -   `pipenv --python 3.9.1`
     -   `pipenv install`
