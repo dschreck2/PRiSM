@@ -1,0 +1,1 @@
+This will be used to store version history. The user can read from it by clicking the version button on the UI.

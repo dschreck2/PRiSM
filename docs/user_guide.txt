@@ -1,0 +1,1 @@
+User help guide information, when the help button on the UI is selected.
