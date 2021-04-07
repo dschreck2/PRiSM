@@ -19,4 +19,4 @@ This would require something like the following commands
 -   `pipenv install`
 
 Then, to run the backend:
-    -   `pipenv run python backend`
+-   `pipenv run python backend`
