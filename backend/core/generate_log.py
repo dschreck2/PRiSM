@@ -58,15 +58,11 @@ def exit(func):
 logger = logging.getLogger("PRiSM")
 formatter = logging.Formatter(read_config.config["log"]["format"])
 
-logger.addHandler(
-    create_file_handler(read_config.config["log"]["location"])
-)
+logger.addHandler(create_file_handler(read_config.config["log"]["location"]))
 if read_config.config["is_debug"]:
     logger.setLevel(logging.DEBUG)
 else:
     logger.setLevel(logging.INFO)
-logger.debug(
-    "Log file located: {}".format(read_config.config["log"]["location"])
-)
+logger.debug("Log file located: {}".format(read_config.config["log"]["location"]))
 sys.excepthook = traceback_hook
 logger.debug("Logger Initialized")
