@@ -1,5 +1,5 @@
 """
-A service to get return the output of a command
+A service to return the output of a command
 """
 import subprocess
 
@@ -11,7 +11,7 @@ def run(command):
     """
     The method to run a terminal command
     command: (String) A terminal command
-    return: macOS version
+    return: Terminal command output
     """
     command = command.split()
 
@@ -57,6 +57,3 @@ def run(command):
         out = p.stdout.read().decode("utf-8")
 
     return out
-
-    numCores = -1
-    return numCores
