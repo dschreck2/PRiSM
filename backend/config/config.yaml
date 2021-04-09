@@ -1,0 +1,5 @@
+log:
+  location: "backend/logs/prismlog.txt"
+  format: "%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(message)s"
+is_debug: True
+is_running: True

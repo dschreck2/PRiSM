@@ -4,8 +4,19 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+ruamel-yaml = "*"
 
 [dev-packages]
+pre-commit = "*"
+isort = "*"
+flake8 = "*"
+mypy = "*"
+bandit = "*"
+pycodestyle = "*"
+dodgy = "*"
+radon = "*"
+flake8-polyfill = "*"
+black = "*"
 
 [requires]
 python_version = "3.9"
