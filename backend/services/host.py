@@ -1,11 +1,11 @@
 """
 A service to store host information in the db
 """
-import datetime
 import sqlite3
 
+from core import conversion
 from core import generate_log as logger
-from core import input_command
+from core import input_command, time
 
 
 @logger.wrap(logger.enter, logger.exit)
@@ -13,9 +13,7 @@ def run():
     """
     The method to gather host information and store it in the db
     """
-    dateTime = datetime.datetime.now()
-    # "%Y-%m-%d %H:%M:%S:%f" is default formatting with everything
-    dateTime = dateTime.strftime("%m-%d-%y %H:%M:%S")
+    dateTime = time.get_current_time()
 
     numCoresCommand = "sysctl -n hw.logicalcpu"
     numCores = int(input_command.run(numCoresCommand))
@@ -25,11 +23,11 @@ def run():
 
     totalDiskCommand = "df | grep '/$' | awk '{s=$2} END {print s}'"
     totalDiskBlocks = int(input_command.run(totalDiskCommand))
-    totalDiskGB = totalDiskBlocks * 512 / 1000 ** 3
+    totalDiskGB = conversion.blocks_to_gb(totalDiskBlocks)
 
     totalRamCommand = "sysctl hw.memsize | awk '{s=$2} END {print s}'"
     totalRamBytes = int(input_command.run(totalRamCommand))
-    totalRamGB = totalRamBytes / 1024 ** 3
+    totalRamGB = conversion.bytes_to_gb(totalRamBytes)
 
     host = [dateTime, numCores, osVersion, totalDiskGB, totalRamGB]
     con = sqlite3.connect("db/prism.db")
