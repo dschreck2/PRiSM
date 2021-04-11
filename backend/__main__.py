@@ -4,12 +4,21 @@ The main file to store PRiSM data in the database
 
 from core import generate_log as logger
 from core import read_config
-from services import process_command
+from services import host  # cpu, disk, process, ram
 
 
 @logger.wrap(logger.enter, logger.exit)
 def main():
     if read_config.config["is_running"]:
+        host.run()
+        """
+        cpu.run()
+        disk.run()
+        process.run()
+        ram.run()
+        """
+
+        """
         print("numCores")
         print(process_command.run("sysctl -n hw.logicalcpu"))
         print()
@@ -71,6 +80,7 @@ def main():
         print("Used CPU")
         print(process_command.run("ps -A -o %cpu | awk '{s+=$1} END {print s}'"))
         print()
+        """
 
 
 if __name__ == "__main__":
