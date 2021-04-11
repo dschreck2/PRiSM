@@ -1,5 +1,5 @@
 """
-A service to return the output of a command
+A file to return the output of a command
 """
 import subprocess
 

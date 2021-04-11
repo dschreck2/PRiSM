@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 ruamel-yaml = "*"
+datetime = "*"
 
 [dev-packages]
 pre-commit = "*"
@@ -20,3 +21,6 @@ black = "*"
 
 [requires]
 python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true
