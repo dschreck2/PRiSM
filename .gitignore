@@ -5,6 +5,12 @@
 .DS_Store
 
 # Ignore log files
-# Note, to ignore backend/logs/prismlog.txt, you may need to run the following:
-# git update-index --skip-worktree backend/logs/prismlog.txt 
 backend/logs/
+
+# Note, to ignore specific files,
+# such as backend/logs/prismlog.txt or db/prism.db,
+# you may need to run the following:
+# git update-index --skip-worktree backend/logs/prismlog.txt
+#
+# To reverse,
+# git update-index --no-skip-worktree backend/logs/prismlog.txt
