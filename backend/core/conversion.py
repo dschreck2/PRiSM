@@ -19,3 +19,11 @@ def bytes_to_gb(bytes):
     Convert bytes to gigabytes
     """
     return bytes / 1024 ** 3
+
+
+@logger.wrap(logger.enter, logger.exit)
+def pages_to_gb(pages):
+    """
+    Convert bytes to gigabytes
+    """
+    return pages * 4096 / 1024 ** 3
