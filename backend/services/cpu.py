@@ -1,6 +1,7 @@
 """
 A service to store cpu information in the db
 """
+import pathlib
 import sqlite3
 
 from core import db_query
@@ -20,8 +21,10 @@ def run():
     usedCPUCommand = "ps -A -o %cpu | awk '{s+=$1} END {print s}'"
     usedCPU = float(input_command.run(usedCPUCommand))
 
+    path = pathlib.Path(__file__).parent.absolute()
+
     cpu = [hostId, dateTime, usedCPU]
-    con = sqlite3.connect("db/prism.db")
+    con = sqlite3.connect("{}/../../db/prism.db".format(path))
     cur = con.cursor()
     cur.execute("INSERT INTO cpu VALUES (NULL,?,?,?)", cpu)
     con.commit()
