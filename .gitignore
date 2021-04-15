@@ -10,6 +10,9 @@ backend/logs/
 # Cache
 __pycache__
 
+# Run file
+run.txt
+
 # Note, to ignore specific files,
 # such as backend/logs/prismlog.txt or db/prism.db,
 # you may need to run the following:
@@ -28,7 +31,7 @@ frontend/*.xcodeproj/*
 
 #
 # *.lock - this is used and abused by many editors for many different things.
-#    For the main ones I use (e.g. Eclipse), it should be excluded 
+#    For the main ones I use (e.g. Eclipse), it should be excluded
 #    from source-control, but YMMV.
 #   (lock files are usually local-only file-synchronization on the local FS that should NOT go in git)
 # c.f. the "OPTIONAL" section at bottom though, for tool-specific variations!
@@ -42,7 +45,7 @@ frontend/*.xcodeproj/*
 
 ####
 # Xcode temporary files that should never be committed
-# 
+#
 # NB: NIB/XIB files still exist even on Storyboard projects, so we want this...
 *~.nib
 
@@ -104,7 +107,7 @@ Carthage
 
 # fastlane
 #
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the 
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
 # screenshots whenever they are needed.
 # For more information about the recommended setup visit:
 # https://github.com/fastlane/fastlane/blob/master/docs/Gitignore.md
