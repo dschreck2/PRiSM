@@ -1,6 +1,7 @@
 """
 A service to store disk information in the db
 """
+import pathlib
 import sqlite3
 
 from core import conversion, db_query
@@ -21,8 +22,10 @@ def run():
     usedDiskBlocks = int(input_command.run(usedDiskCommand))
     usedDiskGB = conversion.blocks_to_gb(usedDiskBlocks)
 
+    path = pathlib.Path(__file__).parent.absolute()
+
     disk = [hostId, dateTime, usedDiskGB]
-    con = sqlite3.connect("db/prism.db")
+    con = sqlite3.connect("{}/../../db/prism.db".format(path))
     cur = con.cursor()
     cur.execute("INSERT INTO disk VALUES (NULL,?,?,?)", disk)
     con.commit()

@@ -1,6 +1,7 @@
 """
 A service to store ram information in the db
 """
+import pathlib
 import sqlite3
 
 from core import conversion, db_query
@@ -42,8 +43,9 @@ def run():
     usedRamPages = appMemory + wiredMemory + compressedMemory
     usedRamGB = conversion.pages_to_gb(usedRamPages)
 
+    path = pathlib.Path(__file__).parent.absolute()
     ram = [hostId, dateTime, usedRamGB]
-    con = sqlite3.connect("db/prism.db")
+    con = sqlite3.connect("{}/../../db/prism.db".format(path))
     cur = con.cursor()
     cur.execute("INSERT INTO ram VALUES (NULL,?,?,?)", ram)
     con.commit()
