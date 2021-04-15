@@ -4,7 +4,7 @@ import logging
 import sys
 from logging import handlers
 
-from core import read_config
+#from core import read_config
 
 
 def create_file_handler(log_name):
@@ -56,13 +56,18 @@ def exit(func):
 
 
 logger = logging.getLogger("PRiSM")
-formatter = logging.Formatter(read_config.config["log"]["format"])
+#formatter = logging.Formatter(read_config.config["log"]["format"])
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(message)s")
 
-logger.addHandler(create_file_handler(read_config.config["log"]["location"]))
+#logger.addHandler(create_file_handler(read_config.config["log"]["location"]))
+logger.addHandler(create_file_handler("backend/logs/prismlog.txt"))
+'''
 if read_config.config["is_debug"]:
     logger.setLevel(logging.DEBUG)
 else:
     logger.setLevel(logging.INFO)
-logger.debug("Log file located: {}".format(read_config.config["log"]["location"]))
+'''
+#logger.debug("Log file located: {}".format(read_config.config["log"]["location"]))
+logger.debug("Log file located: {}".format("backend/logs/prismlog.txt"))
 sys.excepthook = traceback_hook
 logger.debug("Logger Initialized")
