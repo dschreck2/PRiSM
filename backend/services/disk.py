@@ -1,7 +1,6 @@
 """
 A service to store disk information in the db
 """
-import pathlib
 import sqlite3
 
 from core import conversion, db_query
@@ -10,9 +9,11 @@ from core import input_command, time
 
 
 @logger.wrap(logger.enter, logger.exit)
-def run():
+def run(count, db_file):
     """
     The method to gather disk information and store it in the db
+    - count: (int) The iteration of the current run
+    - db_file: (string) The path to the database file
     """
     hostId = db_query.max_host_id()
 
@@ -22,12 +23,10 @@ def run():
     usedDiskBlocks = int(input_command.run(usedDiskCommand))
     usedDiskGB = conversion.blocks_to_gb(usedDiskBlocks)
 
-    path = pathlib.Path(__file__).parent.absolute()
-
-    disk = [hostId, dateTime, usedDiskGB]
-    con = sqlite3.connect("{}/../../db/prism.db".format(path))
+    disk = [hostId, count, dateTime, usedDiskGB]
+    con = sqlite3.connect(db_file)
     cur = con.cursor()
-    cur.execute("INSERT INTO disk VALUES (NULL,?,?,?)", disk)
+    cur.execute("INSERT INTO disk VALUES (NULL,?,?,?,?)", disk)
     con.commit()
     cur.close()
     con.close()

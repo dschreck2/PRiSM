@@ -62,7 +62,7 @@ formatter = logging.Formatter(
 path = pathlib.Path(__file__).parent.absolute()
 
 logger.addHandler(create_file_handler("{}/../logs/prismlog.txt".format(path)))
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 logger.debug("Log file located: {}".format("{}/../logs/prismlog.txt".format(path)))
 sys.excepthook = traceback_hook

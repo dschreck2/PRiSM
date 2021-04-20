@@ -1,7 +1,6 @@
 """
 A service to store ram information in the db
 """
-import pathlib
 import sqlite3
 
 from core import conversion, db_query
@@ -10,9 +9,11 @@ from core import input_command, time
 
 
 @logger.wrap(logger.enter, logger.exit)
-def run():
+def run(count, db_file):
     """
     The method to gather ram information and store it in the db
+    - count: (int) The iteration of the current run
+    - db_file: (string) The path to the database file
     """
     hostId = db_query.max_host_id()
 
@@ -43,11 +44,10 @@ def run():
     usedRamPages = appMemory + wiredMemory + compressedMemory
     usedRamGB = conversion.pages_to_gb(usedRamPages)
 
-    path = pathlib.Path(__file__).parent.absolute()
-    ram = [hostId, dateTime, usedRamGB]
-    con = sqlite3.connect("{}/../../db/prism.db".format(path))
+    ram = [hostId, count, dateTime, usedRamGB]
+    con = sqlite3.connect(db_file)
     cur = con.cursor()
-    cur.execute("INSERT INTO ram VALUES (NULL,?,?,?)", ram)
+    cur.execute("INSERT INTO ram VALUES (NULL,?,?,?,?)", ram)
     con.commit()
     cur.close()
     con.close()

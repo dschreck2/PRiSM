@@ -1,7 +1,6 @@
 """
 A service to store host information in the db
 """
-import pathlib
 import sqlite3
 
 from core import conversion
@@ -10,9 +9,10 @@ from core import input_command, time
 
 
 @logger.wrap(logger.enter, logger.exit)
-def run():
+def run(db_file):
     """
     The method to gather host information and store it in the db
+    - db_file: (string) The path to the database file
     """
     dateTime = time.get_current_time()
 
@@ -30,9 +30,8 @@ def run():
     totalRamBytes = int(input_command.run(totalRamCommand))
     totalRamGB = conversion.bytes_to_gb(totalRamBytes)
 
-    path = pathlib.Path(__file__).parent.absolute()
     host = [dateTime, numCores, osVersion, totalDiskGB, totalRamGB]
-    con = sqlite3.connect("{}/../../db/prism.db".format(path))
+    con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO host VALUES (NULL,?,?,?,?,?)", host)
     con.commit()
