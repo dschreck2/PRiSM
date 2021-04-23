@@ -15,6 +15,7 @@ def run(count, db_file):
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
+    logger.logger.info("Executing and storing CPU data")
     hostId = db_query.max_host_id()
 
     dateTime = time.get_current_time()

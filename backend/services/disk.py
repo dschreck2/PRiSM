@@ -19,6 +19,8 @@ def run(count, db_file):
 
     dateTime = time.get_current_time()
 
+    logger.logger.info("Executing and storing disk data")
+
     usedDiskCommand = "df | tail +2 | awk '{s+=$3} END {print s}'"
     usedDiskBlocks = int(input_command.run(usedDiskCommand))
     usedDiskGB = conversion.blocks_to_gb(usedDiskBlocks)

@@ -4,6 +4,8 @@ The main file to store PRiSM data in the database
 
 import os
 import pathlib
+import time
+import datetime
 
 from core import generate_log as logger
 from services import cpu, create_db, disk, host, process, prune, ram
@@ -26,14 +28,22 @@ def main():
         f = open(run_file, "x")
         host.run(db_file)
         count = 0
+        currentTime = datetime.datetime.now()
+        #Run first loop immediately
+        executeTime = currentTime
         while os.path.exists(run_file):
+            currentTime = datetime.datetime.now()
             count += 1
-            cpu.run(count, db_file)
-            disk.run(count, db_file)
-            process.run(count, db_file)
-            ram.run(count, db_file)
-            prune.run(count, db_file)
-        f.close()
+            if currentTime >= executeTime:
+              #Executing in 15 second intervals
+              executeTime = currentTime + datetime.timedelta(seconds=15)
+              cpu.run(count, db_file)
+              disk.run(count, db_file)
+              process.run(count, db_file)
+              ram.run(count, db_file)
+              prune.run(count, db_file)
+            else:
+              time.sleep(.001)
 
     except FileExistsError as e:
         logger.logger.info(e)

@@ -16,6 +16,8 @@ def run(db_file):
     """
     dateTime = time.get_current_time()
 
+    logger.logger.info("Executing and storing host data")
+
     numCoresCommand = "sysctl -n hw.logicalcpu"
     numCores = int(input_command.run(numCoresCommand))
 
