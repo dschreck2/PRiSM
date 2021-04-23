@@ -19,6 +19,8 @@ def run(count, db_file):
 
     dateTime = time.get_current_time()
 
+    logger.logger.info("Executing and storing RAM data")
+
     internalPageCountCommand = (
         "sysctl vm.page_pageable_internal_count | awk '{s=$2} END {print s}'"
     )

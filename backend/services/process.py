@@ -19,6 +19,8 @@ def run(count, db_file):
 
     dateTime = time.get_current_time()
 
+    logger.logger.info("Executing and storing process data")
+
     processInfoCommand = "ps -arcwwwxo 'command pid ppid %mem %cpu user etime time'"
     processInfo = input_command.run(processInfoCommand)
     processInfo = processInfo.split("\n")
