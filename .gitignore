@@ -7,6 +7,9 @@
 # Ignore log files
 backend/logs/
 
+# Ignore DB files
+db/prism.db
+
 # Cache
 __pycache__
 
