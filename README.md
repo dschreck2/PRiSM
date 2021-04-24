@@ -2,6 +2,7 @@
 Process Reporting in System macOS
 
 [Software Design Document](https://docs.google.com/document/d/1mOahcHLojIP6MrTeYPcMqodTfNFpQAfnWFo-GkrPS7o/edit?usp=sharing)
+[Test Approach Document](https://docs.google.com/document/d/1cTJtmFOcOe7riEDDYkBihPlGxmRJeghsBNP05xNor1Y/edit?usp=sharing)
 
 ### Backend Dependency Installation (For Development Only)
 1.  Clone this repository into your desired directory
