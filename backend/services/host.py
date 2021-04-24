@@ -14,15 +14,15 @@ def run(db_file):
     The method to gather host information and store it in the db
     - db_file: (string) The path to the database file
     """
-    dateTime = time.get_current_time()
-
     logger.logger.info("Executing and storing host data")
+
+    dateTime = time.get_current_time()
 
     numCoresCommand = "sysctl -n hw.logicalcpu"
     numCores = int(input_command.run(numCoresCommand))
 
-    osVersionCommand = "sw_vers | grep ProductVersion | awk '{s=$2} END {print s}'"
-    osVersion = input_command.run(osVersionCommand)
+    osVersionCommand = "sw_vers -productVersion"
+    osVersion = input_command.run(osVersionCommand).strip("\n")
 
     totalDiskCommand = "df | grep '/$' | awk '{s=$2} END {print s}'"
     totalDiskBlocks = int(input_command.run(totalDiskCommand))
@@ -33,6 +33,7 @@ def run(db_file):
     totalRamGB = conversion.bytes_to_gb(totalRamBytes)
 
     host = [dateTime, numCores, osVersion, totalDiskGB, totalRamGB]
+    logger.logger.info("Stored host: {}".format(host))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO host VALUES (NULL,?,?,?,?,?)", host)

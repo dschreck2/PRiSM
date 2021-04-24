@@ -40,15 +40,16 @@ def main():
                 count += 1
                 cpu.run(count, db_file)
                 disk.run(count, db_file)
-                process.run(count, db_file)
                 ram.run(count, db_file)
+                process.run(count, db_file)
                 prune.run(count, db_file)
             else:
                 time.sleep(0.001)
+        logger.logger.info("Run file no longer exists, ending")
 
     except FileExistsError as e:
         logger.logger.info(e)
-        logger.logger.info("Already running, don't run again")
+        logger.logger.info("Run file exists, don't run again")
 
 
 if __name__ == "__main__":

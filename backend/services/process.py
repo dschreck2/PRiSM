@@ -15,11 +15,11 @@ def run(count, db_file):
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
+    logger.logger.info("Executing and storing process data")
+
     hostId = db_query.max_host_id()
 
     dateTime = time.get_current_time()
-
-    logger.logger.info("Executing and storing process data")
 
     processInfoCommand = "ps -arcwwwxo 'command pid ppid %mem %cpu user etime time'"
     processInfo = input_command.run(processInfoCommand)
@@ -56,6 +56,7 @@ def run(count, db_file):
             wallTime,
             cpuTime,
         ]
+        logger.logger.info("Stored process: {}".format(process))
         con = sqlite3.connect(db_file)
         cur = con.cursor()
         cur.execute(

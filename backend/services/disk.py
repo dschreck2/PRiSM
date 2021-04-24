@@ -15,17 +15,18 @@ def run(count, db_file):
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
+    logger.logger.info("Executing and storing disk data")
+
     hostId = db_query.max_host_id()
 
     dateTime = time.get_current_time()
-
-    logger.logger.info("Executing and storing disk data")
 
     usedDiskCommand = "df | tail +2 | awk '{s+=$3} END {print s}'"
     usedDiskBlocks = int(input_command.run(usedDiskCommand))
     usedDiskGB = conversion.blocks_to_gb(usedDiskBlocks)
 
     disk = [hostId, count, dateTime, usedDiskGB]
+    logger.logger.info("Stored disk: {}".format(disk))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO disk VALUES (NULL,?,?,?,?)", disk)
