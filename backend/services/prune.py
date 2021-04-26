@@ -22,6 +22,8 @@ def run(count, db_file):
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
+    logger.logger.info("Pruning DB data")
+
     hostId = db_query.max_host_id()
 
     tables = ["cpu", "disk", "process", "ram"]
@@ -31,6 +33,7 @@ def run(count, db_file):
 
     # At 6 prune 2, at 7 prune 3, at 8 prune 4, skip 9, at 10 prune 6, etc.
     if count >= 6 and count % 4 != 1:
+        logger.logger.info("Count is {}, pruning {}".format(count, count - 4))
         for table in tables:
             prune = [hostId, count - 4]
             cur.execute(
@@ -39,6 +42,7 @@ def run(count, db_file):
 
     # At 45 prune 5, ... at 77 prune 37, skip 81, at 85 prune 45
     if count >= 45 and count % 4 == 1 and count % 41 != 1:
+        logger.logger.info("Count is {}, pruning {}".format(count, count - 40))
         for table in tables:
             prune = [hostId, count - 40]
             cur.execute(

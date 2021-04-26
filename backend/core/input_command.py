@@ -13,6 +13,7 @@ def run(command):
     command: (String) A terminal command
     return: Terminal command output
     """
+    logger.logger.debug("Running command: {}".format(command))
     command = command.split()
 
     if "|" in command:
@@ -56,4 +57,5 @@ def run(command):
         p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = p.stdout.read().decode("utf-8")
 
+    logger.logger.debug("Command output: {}".format(out))
     return out

@@ -16,6 +16,7 @@ def run(count, db_file):
     - db_file: (string) The path to the database file
     """
     logger.logger.info("Executing and storing CPU data")
+
     hostId = db_query.max_host_id()
 
     dateTime = time.get_current_time()
@@ -24,6 +25,7 @@ def run(count, db_file):
     usedCPU = float(input_command.run(usedCPUCommand))
 
     cpu = [hostId, count, dateTime, usedCPU]
+    logger.logger.info("Stored cpu: {}".format(cpu))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO cpu VALUES (NULL,?,?,?,?)", cpu)

@@ -15,4 +15,6 @@ def get_current_time():
     # "%Y-%m-%d %H:%M:%S:%f" is default formatting with everything
     dateTime = dateTime.strftime("%m-%d-%y %H:%M:%S")
 
+    logger.logger.debug("Getting current time: {}".format(dateTime))
+
     return dateTime

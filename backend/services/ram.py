@@ -15,11 +15,11 @@ def run(count, db_file):
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
+    logger.logger.info("Executing and storing RAM data")
+
     hostId = db_query.max_host_id()
 
     dateTime = time.get_current_time()
-
-    logger.logger.info("Executing and storing RAM data")
 
     internalPageCountCommand = (
         "sysctl vm.page_pageable_internal_count | awk '{s=$2} END {print s}'"
@@ -47,6 +47,7 @@ def run(count, db_file):
     usedRamGB = conversion.pages_to_gb(usedRamPages)
 
     ram = [hostId, count, dateTime, usedRamGB]
+    logger.logger.info("Stored ram: {}".format(ram))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO ram VALUES (NULL,?,?,?,?)", ram)
