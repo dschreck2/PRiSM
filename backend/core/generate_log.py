@@ -27,13 +27,13 @@ def traceback_hook(type, value, traceback):
 
 
 def wrap(pre, post):
-    """ Wrapper """
+    """Wrapper"""
 
     def decorate(func):
-        """ Decorator """
+        """Decorator"""
 
         def call(*args, **kwargs):
-            """ Actual wrapping """
+            """Actual wrapping"""
             pre(func)
             result = func(*args, **kwargs)
             post(func)
@@ -45,12 +45,12 @@ def wrap(pre, post):
 
 
 def enter(func):
-    """ Pre function logging """
+    """Pre function logging"""
     logger.debug("{}.{} ->".format(func.__code__.co_filename, func.__name__))
 
 
 def exit(func):
-    """ Post function logging """
+    """Post function logging"""
     logger.debug("{}.{} <-".format(func.__code__.co_filename, func.__name__))
 
 
