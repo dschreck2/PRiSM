@@ -16,6 +16,7 @@ dodgy = "*"
 radon = "*"
 flake8-polyfill = "*"
 black = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.9"
