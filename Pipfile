@@ -17,6 +17,7 @@ radon = "*"
 flake8-polyfill = "*"
 black = "*"
 pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.9"
