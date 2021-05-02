@@ -16,6 +16,9 @@ __pycache__
 # Run file
 run.txt
 
+# Coverage
+.coverage
+
 # Note, to ignore specific files,
 # such as backend/logs/prismlog.txt or db/prism.db,
 # you may need to run the following:

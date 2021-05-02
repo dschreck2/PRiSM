@@ -74,8 +74,8 @@ repos:
 
   - id: pytest-cov
     name: pytest
-    stages: [push]
+    stages: [commit]
     language: system
-    entry: pipenv run pytest --cov backend --cov-fail-under=1 # --cov-fail-under=100
+    entry: pipenv run pytest --cov backend --cov-fail-under=10 # --cov-fail-under=100
     types: [python]
     pass_filenames: false
