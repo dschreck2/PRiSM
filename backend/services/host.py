@@ -33,10 +33,10 @@ def run(db_file):
     totalRamGB = conversion.bytes_to_gb(totalRamBytes)
 
     host = [dateTime, numCores, osVersion, totalDiskGB, totalRamGB]
-    logger.logger.info("Stored host: {}".format(host))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO host VALUES (NULL,?,?,?,?,?)", host)
     con.commit()
     cur.close()
     con.close()
+    logger.logger.info("Stored host: {}".format(host))

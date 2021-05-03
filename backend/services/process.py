@@ -56,7 +56,6 @@ def run(count, db_file):
             wallTime,
             cpuTime,
         ]
-        logger.logger.info("Stored process: {}".format(process))
         con = sqlite3.connect(db_file)
         cur = con.cursor()
         cur.execute(
@@ -65,3 +64,4 @@ def run(count, db_file):
         con.commit()
         cur.close()
         con.close()
+        logger.logger.info("Stored process: {}".format(process))

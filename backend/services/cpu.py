@@ -25,10 +25,10 @@ def run(count, db_file):
     usedCPU = float(input_command.run(usedCPUCommand))
 
     cpu = [hostId, count, dateTime, usedCPU]
-    logger.logger.info("Stored cpu: {}".format(cpu))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO cpu VALUES (NULL,?,?,?,?)", cpu)
     con.commit()
     cur.close()
     con.close()
+    logger.logger.info("Stored cpu: {}".format(cpu))

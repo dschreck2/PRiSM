@@ -26,10 +26,10 @@ def run(count, db_file):
     usedDiskGB = conversion.blocks_to_gb(usedDiskBlocks)
 
     disk = [hostId, count, dateTime, usedDiskGB]
-    logger.logger.info("Stored disk: {}".format(disk))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO disk VALUES (NULL,?,?,?,?)", disk)
     con.commit()
     cur.close()
     con.close()
+    logger.logger.info("Stored disk: {}".format(disk))

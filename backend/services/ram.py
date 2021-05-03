@@ -47,10 +47,10 @@ def run(count, db_file):
     usedRamGB = conversion.pages_to_gb(usedRamPages)
 
     ram = [hostId, count, dateTime, usedRamGB]
-    logger.logger.info("Stored ram: {}".format(ram))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO ram VALUES (NULL,?,?,?,?)", ram)
     con.commit()
     cur.close()
     con.close()
+    logger.logger.info("Stored ram: {}".format(ram))

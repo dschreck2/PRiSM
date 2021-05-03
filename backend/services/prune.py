@@ -22,8 +22,6 @@ def run(count, db_file):
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
-    logger.logger.info("Pruning DB data")
-
     hostId = db_query.max_host_id()
 
     tables = ["cpu", "disk", "process", "ram"]

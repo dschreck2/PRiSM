@@ -64,18 +64,18 @@ repos:
     types: [python]
     require_serial: true
 
-  - id: pytest
-    name: pytest
-    stages: [commit]
-    language: system
-    entry: pipenv run pytest
-    types: [python]
-    pass_filenames: false
-
   - id: pytest-cov
     name: pytest-cov
     stages: [commit]
     language: system
-    entry: pipenv run pytest --cov backend --cov-fail-under=10 # --cov-fail-under=100
+    entry: pipenv run pytest --cov backend --cov-fail-under=97
     types: [python]
     pass_filenames: false
+
+  # - id: pytest
+  #   name: pytest
+  #   stages: [commit]
+  #   language: system
+  #   entry: pipenv run pytest
+  #   types: [python]
+  #   pass_filenames: false
