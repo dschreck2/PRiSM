@@ -35,7 +35,7 @@ def main(test_loops=-1):
         currentTime = datetime.datetime.now()
         # Run first loop immediately
         executeTime = currentTime
-        while os.path.exists(run_file) and (test_loops >= 1 or test_loops == -1):
+        while os.path.exists(run_file) and (test_loops >= 1 or test_loops <= -1):
             currentTime = datetime.datetime.now()
             if currentTime >= executeTime:
                 # Executing in 15 second intervals

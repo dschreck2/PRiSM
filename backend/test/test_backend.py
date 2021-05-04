@@ -13,6 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import main
 from core import conversion, generate_log
 from main import db_file, run_file
+from services import prune
 
 path = pathlib.Path(__file__).parent.absolute()
 log_file = "{}/../logs/prismlog.txt".format(path)
@@ -57,6 +58,74 @@ def test_fresh_main():
         os.remove(db_file)
 
     assert main.main(2) == 0
+
+
+def test_prune():
+    """
+    Fully tests the prune service
+    """
+    import sqlite3
+
+    testDB = "{}/test.db".format(path)
+
+    # Create a test DB file
+    f = open(testDB, "x")
+    f.close()
+
+    # Connect to DB
+    con = sqlite3.connect(testDB)
+    cur = con.cursor()
+
+    # Create DB tables
+    tables = ["cpu", "disk", "process", "ram"]
+    for table in tables:
+        schema = (
+            "CREATE TABLE {} (hostID INTEGER NOT NULL, count INTEGER NOT NULL);".format(
+                table
+            )
+        )
+        cur.executescript(schema)
+        con.commit()
+
+    # Fill and prune the DB
+    hostId = 1
+    for count in range(1, 201):
+        for table in tables:
+            cur.execute("INSERT INTO {} VALUES (?,?)".format(table), [hostId, count])
+            con.commit()
+        prune.run(count, testDB)
+
+    # Query the DB
+    cur.execute("SELECT * FROM cpu;")
+    cpu = cur.fetchall()
+
+    # Save and exit the DB
+    cur.close()
+    con.close()
+
+    # Delete the test DB
+    if os.path.exists(testDB):
+        os.remove(testDB)
+
+    assert cpu == [
+        (1, 1),
+        (1, 41),
+        (1, 81),
+        (1, 121),
+        (1, 161),
+        (1, 165),
+        (1, 169),
+        (1, 173),
+        (1, 177),
+        (1, 181),
+        (1, 185),
+        (1, 189),
+        (1, 193),
+        (1, 197),
+        (1, 198),
+        (1, 199),
+        (1, 200),
+    ]
 
 
 def test_conversion_blocks_to_gb():
