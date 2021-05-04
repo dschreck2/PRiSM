@@ -39,7 +39,7 @@ def run(count, db_file):
             )
 
     # At 45 prune 5, ... at 77 prune 37, skip 81, at 85 prune 45
-    if count >= 45 and count % 4 == 1 and count % 41 != 1:
+    if count >= 45 and count % 4 == 1 and count % 40 != 1:
         logger.logger.info("Count is {}, pruning {}".format(count, count - 40))
         for table in tables:
             prune = [hostId, count - 40]
