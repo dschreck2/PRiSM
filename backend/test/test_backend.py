@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
 import main
-from core import conversion, db_query, generate_log
+from core import conversion, db_query, generate_log, input_command
 from main import db_file, run_file
 from services import prune
 
@@ -190,3 +190,21 @@ def test_db_query_max_host_id():
         os.remove(testDB)
 
     assert max == 10
+
+
+def test_input_command_no_pipe():
+    """
+    Tests input_command.run() for commands without a pipe
+    """
+    command = "echo 'PRiSM input_command test'"
+
+    assert input_command.run(command) == "PRiSM input_command test\n"
+
+
+def test_input_command_pipe():
+    """
+    Tests input_command.run() for commands with a pipe
+    """
+    command = "echo 'PRiSM input_command test' | awk '{s=$1} END {print s}' | head -c 1"
+
+    assert input_command.run(command) == "P"
