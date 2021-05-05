@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
 import main
-from core import conversion, db_query, generate_log, input_command
+from core import conversion, db_query, generate_log, input_command, time
 from main import db_file, run_file
 from services import prune
 
@@ -208,3 +208,14 @@ def test_input_command_pipe():
     command = "echo 'PRiSM input_command test' | awk '{s=$1} END {print s}' | head -c 1"
 
     assert input_command.run(command) == "P"
+
+
+def test_time_get_current_time():
+    """
+    Tests time.get_current_time()
+    """
+    import datetime
+
+    assert time.get_current_time() == datetime.datetime.now().strftime(
+        "%m-%d-%y %H:%M:%S"
+    )
