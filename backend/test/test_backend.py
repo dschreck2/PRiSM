@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
 import main
-from core import conversion, generate_log
+from core import conversion, db_query, generate_log
 from main import db_file, run_file
 from services import prune
 
@@ -93,7 +93,7 @@ def test_prune():
         for table in tables:
             cur.execute("INSERT INTO {} VALUES (?,?)".format(table), [hostId, count])
             con.commit()
-        prune.run(count, testDB)
+        prune.run(count, hostId, testDB)
 
     # Query the DB
     cur.execute("SELECT * FROM cpu;")
@@ -150,3 +150,43 @@ def test_conversion_pages_to_gb():
     """
     pages = 524288
     assert conversion.pages_to_gb(pages) == 2
+
+
+def test_db_query_max_host_id():
+    """
+    Fully tests querying the maximum host ID
+    """
+    import sqlite3
+
+    testDB = "{}/test.db".format(path)
+
+    # Create a test DB file
+    f = open(testDB, "x")
+    f.close()
+
+    # Connect to DB
+    con = sqlite3.connect(testDB)
+    cur = con.cursor()
+
+    # Create DB table
+    schema = "CREATE TABLE host (id INTEGER NOT NULL);"
+    cur.executescript(schema)
+    con.commit()
+
+    # Fill the DB
+    for id in range(1, 11):
+        cur.execute("INSERT INTO host VALUES (?)", [id])
+        con.commit()
+
+    # Query the DB
+    max = db_query.max_host_id(testDB)
+
+    # Save and exit the DB
+    cur.close()
+    con.close()
+
+    # Delete the test DB
+    if os.path.exists(testDB):
+        os.remove(testDB)
+
+    assert max == 10

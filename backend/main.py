@@ -7,6 +7,7 @@ import os
 import pathlib
 import time
 
+from core import db_query
 from core import generate_log as logger
 from services import cpu, create_db, disk, host, process, prune, ram
 
@@ -30,6 +31,7 @@ def main(test_loops=-1):
         f.close()
 
         host.run(db_file)
+        hostId = db_query.max_host_id(db_file)
 
         count = 0
         currentTime = datetime.datetime.now()
@@ -41,11 +43,11 @@ def main(test_loops=-1):
                 # Executing in 15 second intervals
                 executeTime = currentTime + datetime.timedelta(seconds=15)
                 count += 1
-                cpu.run(count, db_file)
-                disk.run(count, db_file)
-                ram.run(count, db_file)
-                process.run(count, db_file)
-                prune.run(count, db_file)
+                cpu.run(count, hostId, db_file)
+                disk.run(count, hostId, db_file)
+                ram.run(count, hostId, db_file)
+                process.run(count, hostId, db_file)
+                prune.run(count, hostId, db_file)
                 test_loops -= 1
             else:
                 time.sleep(0.001)

@@ -1,19 +1,17 @@
 """
 A file to query the DB for information needed by the backend
 """
-import pathlib
 import sqlite3
 
 from core import generate_log as logger
 
 
 @logger.wrap(logger.enter, logger.exit)
-def max_host_id():
+def max_host_id(db_file):
     """
     Query the max host ID
     """
-    path = pathlib.Path(__file__).parent.absolute()
-    con = sqlite3.connect("{}/../../db/prism.db".format(path))
+    con = sqlite3.connect(db_file)
     cur = con.cursor()
 
     cur.execute("SELECT MAX(id) FROM host;")

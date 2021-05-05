@@ -3,12 +3,11 @@ A service to prune old information from the db
 """
 import sqlite3
 
-from core import db_query
 from core import generate_log as logger
 
 
 @logger.wrap(logger.enter, logger.exit)
-def run(count, db_file):
+def run(count, hostId, db_file):
     """
     The method to prune old information from the DB
 
@@ -22,8 +21,6 @@ def run(count, db_file):
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
-    hostId = db_query.max_host_id()
-
     tables = ["cpu", "disk", "process", "ram"]
 
     con = sqlite3.connect(db_file)
