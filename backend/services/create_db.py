@@ -8,13 +8,9 @@ from core import generate_log as logger
 
 @logger.wrap(logger.enter, logger.exit)
 def run(db_file, schema_file):
-    try:
-        logger.logger.info("Creating database")
-        f = open(db_file, "x")
-        f.close()
-    except FileExistsError as e:
-        logger.logger.info(e)
-        logger.logger.info("DB file exists, this shouldn't be possible")
+    logger.logger.info("Creating database")
+    f = open(db_file, "x")
+    f.close()
 
     f = open(schema_file, "r")
     schema = f.read()

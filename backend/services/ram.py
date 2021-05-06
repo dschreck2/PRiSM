@@ -3,21 +3,19 @@ A service to store ram information in the db
 """
 import sqlite3
 
-from core import conversion, db_query
+from core import conversion
 from core import generate_log as logger
 from core import input_command, time
 
 
 @logger.wrap(logger.enter, logger.exit)
-def run(count, db_file):
+def run(count, hostId, db_file):
     """
     The method to gather ram information and store it in the db
     - count: (int) The iteration of the current run
     - db_file: (string) The path to the database file
     """
     logger.logger.info("Executing and storing RAM data")
-
-    hostId = db_query.max_host_id()
 
     dateTime = time.get_current_time()
 
@@ -47,10 +45,10 @@ def run(count, db_file):
     usedRamGB = conversion.pages_to_gb(usedRamPages)
 
     ram = [hostId, count, dateTime, usedRamGB]
-    logger.logger.info("Stored ram: {}".format(ram))
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("INSERT INTO ram VALUES (NULL,?,?,?,?)", ram)
     con.commit()
     cur.close()
     con.close()
+    logger.logger.info("Stored ram: {}".format(ram))
