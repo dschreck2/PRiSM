@@ -34,7 +34,6 @@ struct ContentView: View {
     
     let db = Database()
     
-    
     var metricCollector: PythonObject
     
     var body: some View {
@@ -53,7 +52,7 @@ struct ContentView: View {
                 }.disabled(self.isCollecting && !showStopButton)
                 
                 Button(action: {
-                    print("Generating report")
+                    TextLog.shared.write("Generating report")
                 }) {
                     Text("Generate Report")
                 }
@@ -97,7 +96,6 @@ struct ContentView: View {
                 Text("% MEM").frame(width: 100, alignment: .topLeading)
                 Text("% CPU").frame(width: 100, alignment: .topLeading)
                 Text("USER").frame(width: 225, alignment: .topLeading)
-//                Text("START TIME").frame(width: 150, alignment: .topLeading)
                 Text("WALLTIME").frame(width: 100, alignment: .topLeading)
                 Text("CPUTIME").frame(width: 100, alignment: .topLeading)
                 Text("THREADS").frame(width: 100, alignment: .topLeading)
@@ -112,26 +110,11 @@ struct ContentView: View {
                 Text(String(format: "%.2f", process.memoryUsage)).frame(width: 100, alignment: .topLeading)
                 Text(String(format: "%.2f", process.cpuUsage)).frame(width: 100, alignment: .topLeading)
                 Text("\(process.username)").frame(width: 225, alignment: .topLeading)
-//                Text("\(process.dateTime)").frame(width: 150, alignment: .topLeading)
                 Text("\(process.walltime)").frame(width: 100, alignment: .topLeading)
                 Text("\(process.cputime)").frame(width: 100, alignment: .topLeading)
                 Text("\(process.threads)").frame(width: 100, alignment: .topLeading)
                 
             }
-//            List {
-//                VStack(alignment: .leading) {
-//                    ForEach(self.processes) { process in
-//                        HStack() {
-//                            Text("\(process.name)").frame(width: 100, alignment: .topLeading).border(Color.red)
-////                            Text(String(format: "%-25@ %-10d %-10d", process.name, process.pid, process.ppid))
-//                            Text("\(process.pid)").frame(width: 100, alignment: .topLeading).border(Color.blue)
-//                            Text("\(process.ppid)").frame(width: 100, alignment: .topLeading).border(Color.green)
-//
-////                            Text("\(process.ppid)")
-//                        }
-//                    }
-//                }
-//            }
         }
     }
     
@@ -139,12 +122,12 @@ struct ContentView: View {
         let queue = DispatchQueue(label: "prism.queue")
         var exitTimer = false
         queue.async {
-            print("Start metric collection")
+            TextLog.shared.write("Start metric collection")
             self.isCollecting = true
             self.metricCollector.main()
             self.isCollecting = false
             exitTimer = true
-            print("Finished metric collection")
+            TextLog.shared.write("Finished metric collection")
         }
         
         // query database every 15 seconds
@@ -165,32 +148,31 @@ struct ContentView: View {
                 // query all processes
                 if host != nil {
                     self.osVersion = host!.osVersion
-                    print("get processes")
+                    TextLog.shared.write("get processes")
                     self.processes = db.getProcesses(hostId: host!.id)
 
-                    print("get cpu usage")
+                    TextLog.shared.write("get cpu usage")
                     self.cpuCurrent = db.getCurrentCpuUsage(hostId: host!.id)
                     self.cpuAverage = db.getAverageCpuUsage(hostId: host!.id)
                     self.cpuCores = host!.numCores
 
-                    print("get ram usage")
+                    TextLog.shared.write("get ram usage")
                     self.ramCurrent = db.getCurrentRamUsage(hostId: host!.id)
                     self.ramTotal = host!.totalRam
                     self.ramAverage = db.getAverageRamUsage(hostId: host!.id)
 
-                    print("get disk usage")
+                    TextLog.shared.write("get disk usage")
                     self.diskUsed =  db.getCurrentDiskUsage(hostId: host!.id)
                     self.diskTotal = host!.totalDisk
                 } else {
-                    print("Skipping process query since host id is nil")
+                    TextLog.shared.write("Skipping process query since host id is nil")
                 }
             } else {
-                print("Skipping database queries since there is no connection to the database")
+                TextLog.shared.write("Skipping database queries since there is no connection to the database")
             }
         }
         
-        print("test")
-        
+        // query data quickly to give the user something to look at
         Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
             if connectionIsOpen {
                 timer.invalidate()
@@ -200,47 +182,24 @@ struct ContentView: View {
             queryDatabase()
         }
         
+        // wait 10 seconds before starting long loop of data querying. This gives the database some time to populate data
         DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
             // Put your code which should be executed with a delay here
-            NSLog("start collection loop")
+            TextLog.shared.write("start collection loop")
             Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { timer in
-                NSLog("Timer beginning")
+                TextLog.shared.write("Timer beginning")
                 if exitTimer {
                     timer.invalidate()
-                    print("Timer exit")
+                    TextLog.shared.write("Timer exit")
                     return
                 }
 
                 queryDatabase()
 
-                print("Timer fired: \(runCount)")
+                TextLog.shared.write("Timer fired: \(runCount)")
                 runCount += 1
             }
         }
-
-//        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
-//            if connectionIsOpen {
-//                timer.invalidate()
-//                return
-//            }
-//
-//            queryDatabase()
-//        }
-////
-//        Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { timer in
-//            print("Timer beginning")
-//            if exitTimer {
-//                timer.invalidate()
-//                print("Timer exit")
-//                return
-//            }
-//
-//            queryDatabase()
-//
-//            print("Timer fired: \(runCount)")
-//            runCount += 1
-//        }
-        print("test2 ")
     }
     
     func stopMetricCollection() {
@@ -252,15 +211,18 @@ struct ContentView: View {
                 // Delete file
                 try fileManager.removeItem(atPath: runFile)
             } else {
-                print("Skipping file removal, run file does not exist")
+                TextLog.shared.write("Skipping file removal, run file does not exist")
             }
         }
         catch let error as NSError {
-            print("Unable to delete run file: \(error)")
+            TextLog.shared.write("Unable to delete run file: \(error)")
         }
     }
     
     func runPythonCode() {
+        TextLog.shared.write("hello singleton")
+        
+        
         if ( self.isCollecting ) {
             self.stopMetricCollection()
         } else {
@@ -289,6 +251,8 @@ struct ContentView: View {
         self.diskTotal = 0
     }
 }
+
+
 
 
 
