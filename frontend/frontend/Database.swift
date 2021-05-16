@@ -44,12 +44,40 @@ class Database {
         return host
     }
     
+    func getAllHosts() -> [Host] {
+        var hosts: [Host] = []
+        
+        do {
+            try self.dbPool.read { db in
+                hosts = try Host.fetchAll(db, sql: "SELECT * from host")
+            }
+        } catch {
+            TextLog.shared.write("Unable to get all hosts: \(error)")
+        }
+        
+        return hosts
+    }
+    
     func getProcesses(hostId: Int) -> [Process] {
         var processes: [Process] = []
         
         do {
             try self.dbPool.read { db in
                 processes = try Process.fetchAll(db, sql: "SELECT * from process WHERE hostId==\(hostId) AND COUNT==(SELECT MAX(count) from process WHERE hostId==\(hostId)) ORDER BY cpuUsage DESC LIMIT 20")
+            }
+        } catch {
+            TextLog.shared.write("Unable to get processes: \(error)")
+        }
+        
+        return processes
+    }
+    
+    func getAllProcesses(date: String) -> [Process] {
+        var processes: [Process] = []
+        
+        do {
+            try self.dbPool.read { db in
+                processes = try Process.fetchAll(db, sql: "SELECT * from process WHERE hostId==(SELECT id from host WHERE dateTime==\'\(date)\')")
             }
         } catch {
             TextLog.shared.write("Unable to get processes: \(error)")

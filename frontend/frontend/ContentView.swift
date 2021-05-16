@@ -31,96 +31,173 @@ struct ContentView: View {
     @State var ramAverage: Double
     @State var diskUsed: Double
     @State var diskTotal: Double
-    
-    let db = Database()
+    @State var hosts: [Database.Host]
+    @State var selectedHost: String
+    @State var isGeneratingReport: Bool = false
     
     var metricCollector: PythonObject
     
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .center) {
-                Button(action: {
-                    self.runPythonCode()
-                    showStopButton.toggle()
-                    if showStopButton {
-                        startStopButtonText = "Stop"
-                    } else {
-                        startStopButtonText = "Start"
+        NavigationView {
+            VStack(alignment: .leading) {
+                HStack(alignment: .center) {
+                    Button(action: {
+                        self.runPythonCode()
+                        showStopButton.toggle()
+                        if showStopButton {
+                            startStopButtonText = "Stop"
+                        } else {
+                            startStopButtonText = "Start"
+                        }
+                    }) {
+                        Text(self.startStopButtonText)
+                    }.disabled(self.isCollecting && !showStopButton)
+                    
+                    Button(action: {
+                        TextLog.shared.write("Generating report")
+                        self.generateReportForHost()
+                    }) {
+                        Text("Generate Report For")
                     }
-                }) {
-                    Text(self.startStopButtonText)
-                }.disabled(self.isCollecting && !showStopButton)
-                
-                Button(action: {
-                    TextLog.shared.write("Generating report")
-                }) {
-                    Text("Generate Report")
-                }
-                
+                    .disabled(self.selectedHost == "" || self.isGeneratingReport)
+                    
+                    Picker("Host", selection: $selectedHost) {
+                        ForEach(self.hosts) { host in
+                            Text(host.dateTime).tag(host.dateTime)
+                        }
+                    }.frame(width: 200)
 
-                Text("Host OS Version: \(self.osVersion)").hidden(self.osVersion.count == 0)
+                    Text("Host OS Version: \(self.osVersion)").hidden(self.osVersion.count == 0)
+                    
+                    
+                }
+                .padding([.top, .leading, .bottom])
+                
+                HStack(spacing: 400) {
+                    VStack(alignment: .leading) {
+                        Text("CPU Usage")
+                        Text(String(format: "%.2f%% Current", self.cpuCurrent))
+                        Text(String(format: "%.2f%% Average", self.cpuAverage))
+                        Text("\(self.cpuCores) Cores")
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("RAM Usage")
+                        Text(String(format: "%.2fG Current", self.ramCurrent))
+                        Text(String(format: "%.2fG Total", self.ramTotal))
+                        Text(String(format: "%.2fG Average", self.ramAverage))
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("Disk Usage")
+                        Text(String(format: "%.2f%% Used", self.diskUsed / self.diskTotal * 100)).hidden(self.diskTotal == 0)
+                        Text(String(format: "%.2fG Used", self.diskUsed))
+                        Text(String(format: "%.2fG Total", self.diskTotal))
+                    }
+                }.padding(.leading, 10)
                 
                 
+                
+                HStack() {
+                    Text("COMMAND").frame(width: 175, alignment: .topLeading)
+                    Text("PID").frame(width: 100, alignment: .topLeading)
+                    Text("PPID").frame(width: 100, alignment: .topLeading)
+                    Text("% MEM").frame(width: 100, alignment: .topLeading)
+                    Text("% CPU").frame(width: 100, alignment: .topLeading)
+                    Text("USER").frame(width: 225, alignment: .topLeading)
+                    Text("WALLTIME").frame(width: 100, alignment: .topLeading)
+                    Text("CPUTIME").frame(width: 100, alignment: .topLeading)
+                    Text("THREADS").frame(width: 100, alignment: .topLeading)
+                }
+                .padding(.leading, 10)
+                .padding(.top, 20)
+                
+                List(self.processes) { process in
+                    Text("\(process.name)").frame(width: 175, alignment: .topLeading)
+                    Text("\(process.pid)").frame(width: 100, alignment: .topLeading)
+                    Text("\(process.ppid)").frame(width: 100, alignment: .topLeading)
+                    Text(String(format: "%.2f", process.memoryUsage)).frame(width: 100, alignment: .topLeading)
+                    Text(String(format: "%.2f", process.cpuUsage)).frame(width: 100, alignment: .topLeading)
+                    Text("\(process.username)").frame(width: 225, alignment: .topLeading)
+                    Text("\(process.walltime)").frame(width: 100, alignment: .topLeading)
+                    Text("\(process.cputime)").frame(width: 100, alignment: .topLeading)
+                    Text("\(process.threads)").frame(width: 100, alignment: .topLeading)
+                    
+                }
             }
-            .padding([.top, .leading, .bottom])
-            
-            HStack(spacing: 400) {
-                VStack(alignment: .leading) {
-                    Text("CPU Usage")
-                    Text(String(format: "%.2f%% Current", self.cpuCurrent))
-                    Text(String(format: "%.2f%% Average", self.cpuAverage))
-                    Text("\(self.cpuCores) Cores")
+        }.onAppear() {
+            self.queryHosts()
+        }
+    }
+    
+    func queryHosts() {
+        let db = Database()
+        
+        DispatchQueue.main.async {
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                if db.openConnection() {
+                    timer.invalidate()
+                    self.hosts = db.getAllHosts()
+                    return
                 }
-                
-                VStack(alignment: .leading) {
-                    Text("RAM Usage")
-                    Text(String(format: "%.2fG Current", self.ramCurrent))
-                    Text(String(format: "%.2fG Total", self.ramTotal))
-                    Text(String(format: "%.2fG Average", self.ramAverage))
-                }
-                
-                VStack(alignment: .leading) {
-                    Text("Disk Usage")
-                    Text(String(format: "%.2f%% Used", self.diskUsed / self.diskTotal * 100)).hidden(self.diskTotal == 0)
-                    Text(String(format: "%.2fG Used", self.diskUsed))
-                    Text(String(format: "%.2fG Total", self.diskTotal))
-                }
-            }.padding(.leading, 10)
-            
-            
-            
-            HStack() {
-                Text("COMMAND").frame(width: 175, alignment: .topLeading)
-                Text("PID").frame(width: 100, alignment: .topLeading)
-                Text("PPID").frame(width: 100, alignment: .topLeading)
-                Text("% MEM").frame(width: 100, alignment: .topLeading)
-                Text("% CPU").frame(width: 100, alignment: .topLeading)
-                Text("USER").frame(width: 225, alignment: .topLeading)
-                Text("WALLTIME").frame(width: 100, alignment: .topLeading)
-                Text("CPUTIME").frame(width: 100, alignment: .topLeading)
-                Text("THREADS").frame(width: 100, alignment: .topLeading)
-            }
-            .padding(.leading, 10)
-            .padding(.top, 20)
-            
-            List(self.processes) { process in
-                Text("\(process.name)").frame(width: 175, alignment: .topLeading)
-                Text("\(process.pid)").frame(width: 100, alignment: .topLeading)
-                Text("\(process.ppid)").frame(width: 100, alignment: .topLeading)
-                Text(String(format: "%.2f", process.memoryUsage)).frame(width: 100, alignment: .topLeading)
-                Text(String(format: "%.2f", process.cpuUsage)).frame(width: 100, alignment: .topLeading)
-                Text("\(process.username)").frame(width: 225, alignment: .topLeading)
-                Text("\(process.walltime)").frame(width: 100, alignment: .topLeading)
-                Text("\(process.cputime)").frame(width: 100, alignment: .topLeading)
-                Text("\(process.threads)").frame(width: 100, alignment: .topLeading)
-                
             }
         }
     }
     
+    func createCsv(processes:[Database.Process]) {
+        let date = NSDate()
+        let unixtime = date.timeIntervalSince1970
+        let paths = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)
+        let url = paths[0].appendingPathComponent("prism_report_\(unixtime).csv")
+        
+        // directly write to file since we know it does not exist yet
+        do {
+            try "COMMAND,PID,PPID,% MEM,% CPU,USER,WALLTIME,CPUTIME,THREADS".data(using: .utf8)?.write(to: url)
+        } catch {
+            TextLog.shared.write("Unable to write initial columns for report")
+        }
+        
+        do {
+            let handle = try FileHandle(forWritingTo: url)
+            handle.seekToEndOfFile()
+            for process in processes {
+                handle.write("\n\(process.name),\(process.pid),\(process.ppid),\(process.memoryUsage),\(process.cpuUsage),\(process.username),\(process.walltime),\(process.cputime),\(process.threads)".data(using: .utf8)!)
+            }
+            handle.closeFile()
+        } catch {
+            TextLog.shared.write("Unable to generate csv file for report \(error)")
+        }
+        
+        
+        
+    }
+    
+    func generateReportForHost() {
+        self.isGeneratingReport = true
+        let db = Database()
+        
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            if db.openConnection() {
+                timer.invalidate()
+                
+                let processes = db.getAllProcesses(date: self.selectedHost)
+                self.createCsv(processes: processes)
+                
+                self.isGeneratingReport = false
+                return
+            }
+        }
+
+    }
+    
     func startMetricCollection() {
         let queue = DispatchQueue(label: "prism.queue")
+        let db = Database()
+        
         var exitTimer = false
+        var connectionIsOpen = false
+        var runCount = 0
+        
         queue.async {
             TextLog.shared.write("Start metric collection")
             self.isCollecting = true
@@ -129,11 +206,6 @@ struct ContentView: View {
             exitTimer = true
             TextLog.shared.write("Finished metric collection")
         }
-        
-        // query database every 15 seconds
-        var runCount = 0
-        
-        var connectionIsOpen = false
         
         func queryDatabase() {
             // connect to database
@@ -176,29 +248,27 @@ struct ContentView: View {
         Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
             if connectionIsOpen {
                 timer.invalidate()
+                
+                // start main collection loop at longer interval
+                TextLog.shared.write("start collection loop")
+                Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { timer in
+                    TextLog.shared.write("Timer beginning")
+                    if exitTimer {
+                        timer.invalidate()
+                        TextLog.shared.write("Timer exit")
+                        return
+                    }
+
+                    queryDatabase()
+
+                    TextLog.shared.write("Timer fired: \(runCount)")
+                    runCount += 1
+                }
+                
                 return
             }
 
             queryDatabase()
-        }
-        
-        // wait 10 seconds before starting long loop of data querying. This gives the database some time to populate data
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-            // Put your code which should be executed with a delay here
-            TextLog.shared.write("start collection loop")
-            Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { timer in
-                TextLog.shared.write("Timer beginning")
-                if exitTimer {
-                    timer.invalidate()
-                    TextLog.shared.write("Timer exit")
-                    return
-                }
-
-                queryDatabase()
-
-                TextLog.shared.write("Timer fired: \(runCount)")
-                runCount += 1
-            }
         }
     }
     
@@ -220,14 +290,12 @@ struct ContentView: View {
     }
     
     func runPythonCode() {
-        TextLog.shared.write("hello singleton")
-        
-        
         if ( self.isCollecting ) {
             self.stopMetricCollection()
         } else {
             self.stopMetricCollection()
             self.startMetricCollection()
+            self.queryHosts()
         }
     }
     
@@ -249,6 +317,9 @@ struct ContentView: View {
         self.ramAverage = 0
         self.diskUsed = 0
         self.diskTotal = 0
+        
+        self.selectedHost = ""
+        self.hosts = []
     }
 }
 
