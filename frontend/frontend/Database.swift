@@ -9,7 +9,6 @@ import Foundation
 import GRDB
 
 class Database {
-//    var dbQueue: DatabaseQueue!
     var dbPool: DatabasePool!
     
     
