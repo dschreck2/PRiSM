@@ -167,9 +167,6 @@ struct ContentView: View {
         } catch {
             TextLog.shared.write("Unable to generate csv file for report \(error)")
         }
-        
-        
-        
     }
     
     func generateReportForHost() {
@@ -322,10 +319,6 @@ struct ContentView: View {
         self.hosts = []
     }
 }
-
-
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
