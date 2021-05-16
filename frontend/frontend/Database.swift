@@ -23,10 +23,10 @@ class Database {
             config.maximumReaderCount = 10
             
             self.dbPool = try DatabasePool(path: dbPath, configuration: config)
-            print("Established database connection")
+            TextLog.shared.write("Established database connection")
             return true
         } catch {
-            print("Unable to establish database connection \(error)")
+            TextLog.shared.write("Unable to establish database connection \(error)")
             return false
         }
     }
@@ -38,10 +38,24 @@ class Database {
                 host = try Host.fetchOne(db, sql: "SELECT * from host WHERE id=(SELECT max(id) FROM host)")!
             }
         } catch {
-            print("Unable to get host: \(error)")
+            TextLog.shared.write("Unable to get host: \(error)")
         }
         
         return host
+    }
+    
+    func getAllHosts() -> [Host] {
+        var hosts: [Host] = []
+        
+        do {
+            try self.dbPool.read { db in
+                hosts = try Host.fetchAll(db, sql: "SELECT * from host")
+            }
+        } catch {
+            TextLog.shared.write("Unable to get all hosts: \(error)")
+        }
+        
+        return hosts
     }
     
     func getProcesses(hostId: Int) -> [Process] {
@@ -52,7 +66,21 @@ class Database {
                 processes = try Process.fetchAll(db, sql: "SELECT * from process WHERE hostId==\(hostId) AND COUNT==(SELECT MAX(count) from process WHERE hostId==\(hostId)) ORDER BY cpuUsage DESC LIMIT 20")
             }
         } catch {
-            print("Unable to get processes: \(error)")
+            TextLog.shared.write("Unable to get processes: \(error)")
+        }
+        
+        return processes
+    }
+    
+    func getAllProcesses(date: String) -> [Process] {
+        var processes: [Process] = []
+        
+        do {
+            try self.dbPool.read { db in
+                processes = try Process.fetchAll(db, sql: "SELECT * from process WHERE hostId==(SELECT id from host WHERE dateTime==\'\(date)\')")
+            }
+        } catch {
+            TextLog.shared.write("Unable to get processes: \(error)")
         }
         
         return processes
