@@ -94,7 +94,7 @@ class Database {
                 cpuUsage = try Double.fetchOne(db, sql: "SELECT used from cpu WHERE id=(SELECT max(id) FROM cpu WHERE hostId==\(hostId))")!
             }
         } catch {
-            print("Unable to get current cpu usage: \(error)")
+            TextLog.shared.write("Unable to get current cpu usage: \(error)")
         }
         
         return cpuUsage
@@ -108,7 +108,7 @@ class Database {
                 cpuAverage = try Double.fetchOne(db, sql: "SELECT AVG(used) from cpu WHERE hostId==\(hostId)")!
             }
         } catch {
-            print("Unable to get average cpu usage: \(error)")
+            TextLog.shared.write("Unable to get average cpu usage: \(error)")
         }
         
         return cpuAverage
@@ -122,7 +122,7 @@ class Database {
                 ramUsage = try Double.fetchOne(db, sql: "SELECT used from ram WHERE id=(SELECT max(id) FROM ram WHERE hostId==\(hostId))")!
             }
         } catch {
-            print("Unable to get current ram usage: \(error)")
+            TextLog.shared.write("Unable to get current ram usage: \(error)")
         }
         
         return ramUsage
@@ -136,7 +136,7 @@ class Database {
                 ramAverage = try Double.fetchOne(db, sql: "SELECT AVG(used) from ram WHERE hostId==\(hostId)")!
             }
         } catch {
-            print("Unable to get average ram usage: \(error)")
+            TextLog.shared.write("Unable to get average ram usage: \(error)")
         }
         
         return ramAverage
@@ -150,7 +150,7 @@ class Database {
                 diskUsage = try Double.fetchOne(db, sql: "SELECT used from disk WHERE id=(SELECT max(id) FROM disk WHERE hostId==\(hostId))")!
             }
         } catch {
-            print("Unable to get current disk usage: \(error)")
+            TextLog.shared.write("Unable to get current disk usage: \(error)")
         }
         
         return diskUsage
