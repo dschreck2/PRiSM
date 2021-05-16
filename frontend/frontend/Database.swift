@@ -11,7 +11,6 @@ import GRDB
 class Database {
     var dbPool: DatabasePool!
     
-    
     func openConnection() -> Bool {
         let resourcesPath = Bundle.main.path(forResource: "db", ofType: nil )!
         let dbPath = "\(resourcesPath.description)/prism.db"
@@ -154,12 +153,6 @@ class Database {
         
         return diskUsage
     }
-    
-    func helloWorld() {
-        print("hello there")
-    }
-    
-    
     
     struct Host: Identifiable, FetchableRecord {
         init(row: Row) {
